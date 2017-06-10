@@ -1,3 +1,0 @@
-command /myaddon:
-	trigger:
-		send "Il marche gg!"
