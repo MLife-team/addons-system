@@ -1,3 +1,0 @@
-command /test_dlc:
-	trigger:
-		send "Cet addon est vraiment très bon !"

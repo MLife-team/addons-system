@@ -1,1 +1,61 @@
+function clearTmp(t: text):
+	set {_var::*} to directory "plugins\Skript\scripts\addons\"'s files
+	loop {_var::*}:
+		delete dir "%loop-value%\tmp"
+
+on load:
+	clearTmp("")
+	wait 1 tick
+	set {_var::*} to directory "plugins\Skript\scripts\addons\"'s files
+	clear {loaded-addons::*}
+	loop {_var::*}:
+		set {_bleu::*} to loop-value split at "\addons\"
+		set {addon.%loop-index%.name} to {_bleu::2}
+
+		# GET Settings  {_addon.%loop-index%.name}
+		set {_name::*} to line 1 in file "%loop-value%\%{addon.%loop-index%.name}%.cfg" split at "name: "
+		set {_display::*} to line 2 in file "%loop-value%\%{addon.%loop-index%.name}%.cfg" split at "display-name: "
+		set {_author::*} to line 3 in file "%loop-value%\%{addon.%loop-index%.name}%.cfg" split at "author: "
+		set {_version::*} to line 4 in file "%loop-value%\%{addon.%loop-index%.name}%.cfg" split at "version: "
+		set {_description::*} to line 5 in file "%loop-value%\%{addon.%loop-index%.name}%.cfg" split at "description: "
+		set {_url::*} to line 6 in file "%loop-value%\%{addon.%loop-index%.name}%.cfg" split at "url: "
+
+		# SET Settings
+		set {name.%{addon.%loop-index%.name}%} to {_name::2}
+		set {display-name.%{addon.%loop-index%.name}%} to {_display::2}
+		set {author.%{addon.%loop-index%.name}%} to {_author::2}
+		set {version.%{addon.%loop-index%.name}%} to {_version::2}
+		set {description.%{addon.%loop-index%.name}%} to {_description::2}
+		set {url.%{addon.%loop-index%.name}%} to {_url::2}
+
+		# TMP Creation
+		create dir "%loop-value%\tmp"
+		wait 1 tick
+		copy file "%loop-value%\%{addon.%loop-index%.name}%.mlife" to "%loop-value%\tmp\"
+		wait 1 tick
+		rename file "%loop-value%\tmp\%{addon.%loop-index%.name}%.mlife" to "%{addon.%loop-index%.name}%.sk"
+		wait 3 seconds
+		execute console command "sk reload addons\%{addon.%loop-index%.name}%\tmp\%{addon.%loop-index%.name}%.sk"
+
+		# ADDON Confirmation
+		if file "%loop-value%\tmp\%{addon.%loop-index%.name}%.sk" exists:
+			add {name.%{addon.%loop-index%.name}%} to {loaded-addons::*}
+			send "&2[MLife]&a [SUCCESS]&r L'addon &l%{addon.%loop-index%.name}%&r a bien ete load" to console
+		else:
+			send "&2[MLife]&4 [ERROR]&r L'addon &l%{addon.%loop-index%.name}%&r n'a pas ete load" to console
+
+on skript stop:
+	clearTmp("")
+
+command /loaded-addons:
+	trigger:
+		loop {loaded-addons::*}:
+			send "&2[=========&r %{display-name.%loop-value%}% &2=========]"
+			send "&aDescription:"
+			send "&r%{description.%loop-value%}%"
+			send "&aAuteur(s):&r %{author.%loop-value%}%"
+			send "&aVersion:&r %{version.%loop-value%}%"
+			send "&aURL:&r %{url.%loop-value%}%"
+			send ""
+
 
