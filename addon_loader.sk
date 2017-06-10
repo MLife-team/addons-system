@@ -1,9 +1,15 @@
+function createDir():
+  if folder "plugins/Skript/scripts/addons" doesn't exists:
+    create folder "plugins/Skript/scripts/addons"
+    send "&2[MLife]&a [SUCCESS]&r Le dossier addons a bien ete cree!" to console
+
 function clearTmp(t: text):
 	set {_var::*} to directory "plugins\Skript\scripts\addons\"'s files
 	loop {_var::*}:
 		delete dir "%loop-value%\tmp"
 
 on load:
+	createDir()
 	clearTmp("")
 	wait 1 tick
 	set {_var::*} to directory "plugins\Skript\scripts\addons\"'s files
@@ -57,5 +63,3 @@ command /loaded-addons:
 			send "&aVersion:&r %{version.%loop-value%}%"
 			send "&aURL:&r %{url.%loop-value%}%"
 			send ""
-
-
